@@ -11,10 +11,11 @@ function App() {
   const [shortUrl,setShortUrl] = useState("");
   const [copied,setCopied] = useState(false);
   const [qrImage,setQrImage] = useState("");
+  const [loading,setLoading] = useState(false);
 
   const handle = async ()=>{
-    if(!url)return ;
-
+    if(!url || loading)return ;
+    setLoading(true);
     try{
       const res = await axios.post(`${API_BASED_URL}/shorten`,{
         originalUrl : url
@@ -31,6 +32,9 @@ function App() {
       console.log(e);
       alert('Something Went Wrong');
     }
+    finally{
+      setLoading(false);
+    }
   }
 
   const handleCopy = ()=>{
@@ -43,7 +47,7 @@ function App() {
     <h1 className="text-4xl font-bold mb-4 text-center">URL-SHORTNER</h1>
     <div className="flex flex-col gap-3 w-full max-w-3xl">
       <input type="text" className="input input-success w-full" placeholder="Enter long URL" value={url} onChange={(e)=>setUrl(e.target.value)}/>
-      <button onClick={handle} className="btn btn-primary w-full sm:auto">
+      <button disabled={loading} onClick={handle} className="btn btn-primary w-full sm:auto">
         Shorten
       </button>
     </div>
